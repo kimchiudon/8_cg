@@ -24,13 +24,14 @@ bool isRightMousePressed = false; // 우클릭 상태 확인
 // TODO: [임시 바닥 데이터] 카메라 테스트용입니다. 
 // 나중에 인테리어(건물 내부) 파트 코드가 합쳐지면 삭제해도 됩니다.
 float floorVertices[] = {
-     50.0f, -0.5f,  50.0f,
-    -50.0f, -0.5f,  50.0f,
-    -50.0f, -0.5f, -50.0f,
+    // position              // normal
+     50.0f, -0.5f,  50.0f,   0.0f, 1.0f, 0.0f,
+    -50.0f, -0.5f,  50.0f,   0.0f, 1.0f, 0.0f,
+    -50.0f, -0.5f, -50.0f,   0.0f, 1.0f, 0.0f,
 
-     50.0f, -0.5f,  50.0f,
-    -50.0f, -0.5f, -50.0f,
-     50.0f, -0.5f, -50.0f
+     50.0f, -0.5f,  50.0f,   0.0f, 1.0f, 0.0f,
+    -50.0f, -0.5f, -50.0f,   0.0f, 1.0f, 0.0f,
+     50.0f, -0.5f, -50.0f,   0.0f, 1.0f, 0.0f
 };
 
 
@@ -147,8 +148,11 @@ int main() {
     glBindBuffer(GL_ARRAY_BUFFER, floorVBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(floorVertices), floorVertices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
 
     // 6. 렌더 루프
     while (!glfwWindowShouldClose(window)) {
@@ -166,6 +170,31 @@ int main() {
 
         // 쉐이더 활성화 및 카메라/투영 행렬 설정
         ourShader.use();
+
+        ourShader.setVec3("viewPos", camera.Position);
+        ourShader.setVec3("objectColor", 0.45f, 0.45f, 0.50f);
+        ourShader.setFloat("shininess", 32.0f);
+
+
+        // 전시관 전체에 은은하게 들어오는 방향광
+        ourShader.setVec3("dirLight.direction", -0.3f, -1.0f, -0.2f);
+        ourShader.setVec3("dirLight.ambient", 0.08f, 0.08f, 0.10f);
+        ourShader.setVec3("dirLight.diffuse", 0.25f, 0.25f, 0.30f);
+        ourShader.setVec3("dirLight.specular", 0.30f, 0.30f, 0.35f);
+
+        // 목성 전시물 방향으로 비추는 스포트라이트
+        ourShader.setVec3("spotLight.position", 0.0f, 5.0f, 5.0f);
+        ourShader.setVec3("spotLight.direction", 0.0f, -1.0f, -1.0f);
+        ourShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+        ourShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(20.0f)));
+
+        ourShader.setVec3("spotLight.ambient", 0.02f, 0.02f, 0.02f);
+        ourShader.setVec3("spotLight.diffuse", 1.0f, 0.95f, 0.75f);
+        ourShader.setVec3("spotLight.specular", 1.0f, 1.0f, 0.9f);
+
+        ourShader.setFloat("spotLight.constant", 1.0f);
+        ourShader.setFloat("spotLight.linear", 0.09f);
+        ourShader.setFloat("spotLight.quadratic", 0.032f);
 
         glm::mat4 projection = glm::perspective(glm::radians(45.0f), 800.0f / 600.0f, 0.1f, 100.0f);
         ourShader.setMat4("projection", projection);
