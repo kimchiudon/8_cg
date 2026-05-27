@@ -56,6 +56,11 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
     }
 }
 
+// 마우스 스크롤 콜백 (줌)
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
+    camera.ProcessMouseScroll(static_cast<float>(yoffset));
+}
+
 void mouse_callback(GLFWwindow* window, double xposIn, double yposIn) {
     if (!isRightMousePressed) return;
 
@@ -119,6 +124,7 @@ int main() {
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetMouseButtonCallback(window, mouse_button_callback);
+    glfwSetScrollCallback(window, scroll_callback);
 
     // 3. GLAD 초기화
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
@@ -158,7 +164,7 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // 공통 행렬 계산
-        glm::mat4 projection = glm::perspective(glm::radians(45.0f),
+        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom),
             800.0f / 600.0f, 0.1f, 100.0f);
         glm::mat4 view = camera.GetViewMatrix();
 
