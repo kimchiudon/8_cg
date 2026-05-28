@@ -88,10 +88,10 @@ Room::Room(float w, float d, float h)
     // ----- 텍스처 로딩 -----
     // 일단 모든 면을 같은 텍스처로. 나중에 면마다 다르게 줄 수 있음.
     floor.texture = loadTexture("textures/floor.jpg");
-    ceiling.texture = loadTexture("textures/ceiling.png");
-    wallFront.texture = loadTexture("textures/wall.png");
-    wallBack.texture = loadTexture("textures/wall.png");
-    wallLeft.texture = loadTexture("textures/wall.png");
+    ceiling.texture = loadTexture("textures/whiteWall.jpg");
+    wallFront.texture = loadTexture("textures/whiteWall.jpg");
+    wallBack.texture = loadTexture("textures/whiteWall.jpg");
+    wallLeft.texture = loadTexture("textures/whiteWall.jpg");
     wallRight.texture = loadTexture("textures/wall.png");
 }
 
@@ -198,5 +198,5 @@ void Room::Draw(Shader& shader) {
     drawFace(wallFront, shader);
     drawFace(wallBack, shader);
     drawFace(wallLeft, shader);
-    drawFace(wallRight, shader);
+    //drawFace(wallRight, shader);
 }

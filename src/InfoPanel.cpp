@@ -70,8 +70,8 @@ static float quadVertices[] = {
 // ==========================================
 InfoPanel::InfoPanel(float posX, float posZ, float floorY) {
     setupCube();
-    baseTexture  = loadTexture("textures/wall.png");   // 받침대: 벽 텍스처(회색 느낌)
-    panelTexture = loadTexture("textures/floor.jpg");  // 패널: 일단 floor, 나중에 목성정보로 교체
+    baseTexture  = loadTexture("textures/panel2.jpg");   // 받침대: 벽 텍스처(회색 느낌)
+    panelTexture = loadTexture("textures/panel2.jpg");  // 패널
 
     // ----- 받침대 (똑바로 선 기둥) -----
     // 바닥(floorY)에서 위로 baseH 만큼 솟은 박스
@@ -103,7 +103,7 @@ InfoPanel::InfoPanel(float posX, float posZ, float floorY) {
         panelModel = m;
 
         setupQuad();
-        infoTexture = loadTexture("textures/wall.jpg");  // 임시, 나중에 목성정보로 교체
+        infoTexture = loadTexture("textures/Callisto.jpg");  // 임시, 나중에 목성정보로 교체
 
         // 정보판 quad: 패널과 같은 위치·각도, 앞면에 살짝 띄워 얹음
         {

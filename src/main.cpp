@@ -7,6 +7,7 @@
 #include "Room.h"
 #include "Staircase.h"
 #include "InfoPanel.h"
+#include "PlanetariumDome.h"
 
 // ==========================================
 // [1. 전역 변수 및 설정]
@@ -145,6 +146,10 @@ int main() {
     Shader roomShader("shaders/room.vert", "shaders/room.frag");    // ⭐ 추가: Room 전용
     Room room(40.0f, 12.0f, 11.0f);    // width=30(가로 길게), depth=12, height=8
     Staircase stairs;
+
+    // 원형 플라네타륨 방 생성 (중심 X=65, Z=0, 반지름 25, 천장 20)
+    PlanetariumDome dome(44.33f, 0.0f, 25.0f, 20.0f);
+
     InfoPanel infoPanel(-7.0f, 3.0f, 2.0f);   // x=-7, z=0, 안내방 평지(y=2.0) 위
 
     unsigned int floorVAO, floorVBO;
@@ -181,23 +186,25 @@ int main() {
         roomShader.use();
         roomShader.setMat4("projection", projection);
         roomShader.setMat4("view", view);
-        roomShader.setVec3("lightPos", glm::vec3(0.0f, 9.0f, 0.0f));      // 천장 중앙 광원
+        roomShader.setVec3("lightPos", glm::vec3(65.0f, 15.0f, 0.0f));      // 천장 중앙 광원
         roomShader.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));    // 흰빛
         roomShader.setVec3("viewPos", camera.Position);
         room.Draw(roomShader);
         stairs.Draw(roomShader);   // ⭐ 계단도 같은 셰이더로 그림
+        dome.Draw(roomShader);
         infoPanel.Draw(roomShader);
 
         // ===== 임시 바닥 (격자) 그리기 =====
         // 통합 시 제거 예정
-        ourShader.use();
+        
+        //ourShader.use();
         ourShader.setMat4("projection", projection);
         ourShader.setMat4("view", view);
         glm::mat4 model = glm::mat4(1.0f);
         ourShader.setMat4("model", model);
 
-        glBindVertexArray(floorVAO);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+        //glBindVertexArray(floorVAO);
+        //glDrawArrays(GL_TRIANGLES, 0, 6);
 
         glfwSwapBuffers(window);
         glfwPollEvents();

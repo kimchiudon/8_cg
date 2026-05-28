@@ -23,12 +23,14 @@
     <ClCompile Include="src\glad.c" />
     <ClCompile Include="src\InfoPanel.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\PlanetariumDome.cpp" />
     <ClCompile Include="src\Room.cpp" />
     <ClCompile Include="src\Staircase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Camera.h" />
     <ClInclude Include="src\InfoPanel.h" />
+    <ClInclude Include="src\PlanetariumDome.h" />
     <ClInclude Include="src\Room.h" />
     <ClInclude Include="src\shader.h" />
     <ClInclude Include="src\Staircase.h" />
