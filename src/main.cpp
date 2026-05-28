@@ -139,7 +139,7 @@ int main() {
     // 5. 셰이더 및 오브젝트 세팅
     Shader ourShader("shaders/basic.vert", "shaders/basic.frag");   // 임시 바닥용
     Shader roomShader("shaders/room.vert", "shaders/room.frag");    // ⭐ 추가: Room 전용
-    Room room(30.0f, 12.0f, 8.0f);    // width=30(가로 길게), depth=12, height=8
+    Room room(40.0f, 12.0f, 11.0f);    // width=30(가로 길게), depth=12, height=8
 
     unsigned int floorVAO, floorVBO;
     glGenVertexArrays(1, &floorVAO);
