@@ -4,7 +4,8 @@
 
 #include "Camera.h"
 #include "shader.h"
-#include "Room.h"      // ⭐ 추가
+#include "Room.h"
+#include "Staircase.h"
 
 // ==========================================
 // [1. 전역 변수 및 설정]
@@ -95,10 +96,12 @@ void processInput(GLFWwindow* window) {
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         camera.ProcessKeyboard(RIGHT, deltaTime);
 
+    /* 자유이동 봉인
     if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
         camera.ProcessKeyboard(UP, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
         camera.ProcessKeyboard(DOWN, deltaTime);
+    */
 }
 
 
@@ -140,6 +143,7 @@ int main() {
     Shader ourShader("shaders/basic.vert", "shaders/basic.frag");   // 임시 바닥용
     Shader roomShader("shaders/room.vert", "shaders/room.frag");    // ⭐ 추가: Room 전용
     Room room(40.0f, 12.0f, 11.0f);    // width=30(가로 길게), depth=12, height=8
+    Staircase stairs;
 
     unsigned int floorVAO, floorVBO;
     glGenVertexArrays(1, &floorVAO);
@@ -159,6 +163,9 @@ int main() {
         lastFrame = currentFrame;
 
         processInput(window);
+        // ⭐ 카메라가 선 자리의 바닥 높이를 구해서 y를 거기 맞춤
+        float floorH = stairs.GetFloorHeightAt(camera.Position.x, camera.Position.z);
+        camera.StickToFloor(floorH);
 
         glClearColor(0.05f, 0.05f, 0.1f, 1.0f);   // 어두운 우주 배경
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -176,6 +183,7 @@ int main() {
         roomShader.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));    // 흰빛
         roomShader.setVec3("viewPos", camera.Position);
         room.Draw(roomShader);
+        stairs.Draw(roomShader);   // ⭐ 계단도 같은 셰이더로 그림
 
         // ===== 임시 바닥 (격자) 그리기 =====
         // 통합 시 제거 예정
