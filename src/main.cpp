@@ -145,6 +145,7 @@ int main() {
     // 5. 셰이더 및 오브젝트 세팅
     Shader ourShader("shaders/basic.vert", "shaders/basic.frag");   // 임시 바닥용
     Shader roomShader("shaders/room.vert", "shaders/room.frag");    // ⭐ 추가: Room 전용
+    Shader jupiterShader("shaders/jupiter.vert", "shaders/jupiter.frag");
     Room room(40.0f, 12.0f, 11.0f);    // width=30(가로 길게), depth=12, height=8
     Staircase stairs;
 
@@ -230,11 +231,11 @@ int main() {
         // ===== 2. 목성계 그리기 =====
         float time = static_cast<float>(glfwGetTime());
         
-        // ⭐ 목성 전용 셰이더(ourShader) 활성화 및 카메라 정보 전달 (순서가 매우 중요!)
-        ourShader.use(); 
-        ourShader.setMat4("projection", projection);
-        ourShader.setMat4("view", view);
-        // (조명 모델 행렬 등은 JupiterSystem.cpp 안에서 알아서 처리됩니다)
+        // ⭐ 목성 전용 셰이더(ourShader) 활성화 및 카메라 정보 전달 
+        jupiterShader.use();
+        jupiterShader.setMat4("projection", projection);
+        jupiterShader.setMat4("view", view);
+        jupiterSys.Draw(jupiterShader, camera, time, glm::vec3(44.33f, 5.0f, 0.0f));
 
         // 좌표 수정
         jupiterSys.Draw(ourShader, camera, time, glm::vec3(44.33f, 5.0f, 0.0f));

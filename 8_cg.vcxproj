@@ -43,6 +43,8 @@
     <None Include=".gitignore" />
     <None Include="shaders\basic.frag" />
     <None Include="shaders\basic.vert" />
+    <None Include="shaders\jupiter.frag" />
+    <None Include="shaders\jupiter.vert" />
     <None Include="shaders\room.frag" />
     <None Include="shaders\room.vert" />
   </ItemGroup>
