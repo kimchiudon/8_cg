@@ -10,6 +10,9 @@
 #include "PlanetariumDome.h"
 #include "JupiterSystem.h"
 
+
+
+
 // ==========================================
 // [1. 전역 변수 및 설정]
 // ==========================================
@@ -89,6 +92,13 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn) {
 void processInput(GLFWwindow* window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
+
+    // 테스트용 질주 키
+    if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+        camera.MovementSpeed = 7.5f;   // 질주 (3배)
+    else
+        camera.MovementSpeed = 2.5f;   // 평소
+
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         camera.ProcessKeyboard(FORWARD, deltaTime);
@@ -173,10 +183,30 @@ int main() {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
+    struct PanelObstacle { float x, z, radius; };
+    std::vector<PanelObstacle> panelObstacles = {
+        { -7.0f,   3.0f, 0.8f },   // 안내방 안내판
+        { 24.0f,   0.0f, 0.8f },   // 목성
+        { 59.9f,  15.6f, 0.8f },   // 이오
+        { 28.8f,  15.6f, 0.8f },   // 유로파
+        { 28.8f, -15.6f, 0.8f },   // 칼리스토
+        { 59.9f, -15.6f, 0.8f },   // 가니메데
+    };
+
     // 걸을 수 있는 영역 = 방 안 또는 돔 안
+
     auto isWalkable = [&](float x, float z) {
         const float MARGIN = 0.5f;
-        return room.Contains(x, z, MARGIN) || dome.Contains(x, z, MARGIN);
+        // 방/돔 안인지
+        if (!(room.Contains(x, z, MARGIN) || dome.Contains(x, z, MARGIN)))
+            return false;
+        // 패널 반경 안이면 막힘
+        for (const auto& p : panelObstacles) {
+            float dx = x - p.x, dz = z - p.z;
+            if (dx * dx + dz * dz < p.radius * p.radius)
+                return false;
+        }
+        return true;
         };
 
     // 목성 생성
@@ -197,6 +227,7 @@ int main() {
         if (!isWalkable(p.x, p.z))      p.z = oldPos.z;   // z 막히면 z만 취소
         camera.Position.x = p.x;
         camera.Position.z = p.z;
+
 
         float floorH = stairs.GetFloorHeightAt(camera.Position.x, camera.Position.z);
         camera.StickToFloor(floorH);
@@ -235,10 +266,11 @@ int main() {
         jupiterShader.use();
         jupiterShader.setMat4("projection", projection);
         jupiterShader.setMat4("view", view);
+        jupiterShader.setVec3("lightDir", glm::vec3(-0.4f, -0.6f, -0.5f));
+        jupiterShader.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+        jupiterShader.setFloat("ambientStrength", 0.15f);
         jupiterSys.Draw(jupiterShader, camera, time, glm::vec3(44.33f, 5.0f, 0.0f));
 
-        // 좌표 수정
-        jupiterSys.Draw(ourShader, camera, time, glm::vec3(44.33f, 5.0f, 0.0f));
 
         // 버퍼 교체 및 이벤트 처리
         glfwSwapBuffers(window);

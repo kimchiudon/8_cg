@@ -199,6 +199,7 @@ unsigned int InfoPanel::loadTexture(const char* path) {
         else if (nrChannels == 4) format = GL_RGBA;
 
         glBindTexture(GL_TEXTURE_2D, textureID);
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         glTexImage2D(GL_TEXTURE_2D, 0, format, w, h, 0,
             format, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
