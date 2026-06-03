@@ -6,7 +6,7 @@
 
 class PlanetariumDome {
 public:
-    // 중심 X, Z / 반지름(radius) / 높이(height)
+   
     PlanetariumDome(float centerX, float centerZ, float radius, float height);
     ~PlanetariumDome();
 
@@ -17,7 +17,7 @@ private:
     unsigned int VAO, VBO;
     unsigned int floorTextureID;
     unsigned int spaceTextureID;
-    int vertexCount; // 동적으로 생성된 정점 개수
+    int vertexCount; 
 
     float centerX, centerZ, radius, height;
     unsigned int loadTexture(const char* path);

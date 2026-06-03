@@ -13,7 +13,7 @@ PlanetariumDome::PlanetariumDome(float centerX, float centerZ, float radius, flo
     this->radius = radius;    
     this->height = height;    
     
-    // 바닥과 우주 텍스처를 각각 따로 로드합니다.
+
     floorTextureID = loadTexture("textures/floor.jpg");
     spaceTextureID = loadTexture("textures/wall.png");
     setupDome(centerX, centerZ, radius, height);
@@ -29,7 +29,7 @@ bool PlanetariumDome::Contains(float x, float z, float margin) const {
 PlanetariumDome::~PlanetariumDome() {
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
-    // 텍스처 메모리도 각각 해제합니다.
+
     glDeleteTextures(1, &floorTextureID);
     glDeleteTextures(1, &spaceTextureID);
 }
@@ -38,7 +38,6 @@ void PlanetariumDome::setupDome(float cx, float cz, float r, float h) {
     std::vector<float> vertices;
     int segments = 360;
 
-    // 1. 바닥 (Floor) 생성 (Y = 0.01f 로 띄움)
     float floorY = 0.01f;
     for (int i = 0; i < segments; i++) {
         float theta1 = (2.0f * PI * i) / segments;
@@ -49,22 +48,20 @@ void PlanetariumDome::setupDome(float cx, float cz, float r, float h) {
         vertices.insert(vertices.end(), { cx + r * cos(theta2), floorY, cz + r * sin(theta2),  0.0f, 1.0f, 0.0f,  0.5f + 0.5f * cos(theta2), 0.5f + 0.5f * sin(theta2) });
     }
 
-    // 2. 둥근 벽 (Wall) 생성
-    float corridorHeight = 11.0f; // ★ 복도의 천장 높이 설정
+ 
+    float corridorHeight = 11.0f; 
 
     for (int i = 0; i < segments; i++) {
         float theta1 = (2.0f * PI * i) / segments;
         float theta2 = (2.0f * PI * (i + 1)) / segments;
 
         float bottomY = 0.0f;
-        float bottomV = 0.0f; // 텍스처 UV V좌표 하단
+        float bottomV = 0.0f; 
 
-        // ★ [수정됨] 입구(167도~192도) 구간 처리
         if (i >= 167 && i <= 192) {
-            // 이 구간은 바닥(0)부터 복도 높이(11)까지는 사람이 지나다니게 비워두고,
-            // 복도 높이(11)부터 돔 천장(20)까지만 벽을 그려서 위쪽 구멍을 메꿉니다!
+            
             bottomY = corridorHeight;
-            bottomV = corridorHeight / h; // 텍스처가 위아래로 눌리지 않도록 비율 맞춤
+            bottomV = corridorHeight / h;
         }
 
         float nx1 = -cos(theta1), nz1 = -sin(theta1);
@@ -73,7 +70,7 @@ void PlanetariumDome::setupDome(float cx, float cz, float r, float h) {
         float u1 = (float)i / segments * 20.0f;
         float u2 = (float)(i + 1) / segments * 20.0f;
 
-        // 벽을 bottomY 부터 천장(h) 까지만 생성
+        
         vertices.insert(vertices.end(), { cx + r * cos(theta1), bottomY, cz + r * sin(theta1),  nx1, 0.0f, nz1,  u1, bottomV });
         vertices.insert(vertices.end(), { cx + r * cos(theta1), h,       cz + r * sin(theta1),  nx1, 0.0f, nz1,  u1, 1.0f });
         vertices.insert(vertices.end(), { cx + r * cos(theta2), h,       cz + r * sin(theta2),  nx2, 0.0f, nz2,  u2, 1.0f });
@@ -83,7 +80,7 @@ void PlanetariumDome::setupDome(float cx, float cz, float r, float h) {
         vertices.insert(vertices.end(), { cx + r * cos(theta2), bottomY, cz + r * sin(theta2),  nx2, 0.0f, nz2,  u2, bottomV });
     }
 
-    // 3. 천장 (Ceiling) 뚜껑 덮기
+    
     for (int i = 0; i < segments; i++) {
         float theta1 = (2.0f * PI * i) / segments;
         float theta2 = (2.0f * PI * (i + 1)) / segments;
@@ -154,16 +151,14 @@ void PlanetariumDome::Draw(Shader& shader) {
 
     glBindVertexArray(VAO);
 
-    // ★ 1. 바닥 렌더링 파트
-    // 바닥 정점은 segments(360) * 꼭짓점(3) = 1080개 입니다.
+
     int floorVertexCount = 360 * 3;
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, floorTextureID);
-    // 배열의 처음 0번째부터 1080개까지만 잘라서 바닥 텍스처로 그립니다.
+ 
     glDrawArrays(GL_TRIANGLES, 0, floorVertexCount);
 
-    // ★ 2. 둥근 벽과 천장 렌더링 파트
-    // 배열의 1080번째 이후 정점들은 모두 우주 텍스처로 그립니다.
+   
     glBindTexture(GL_TEXTURE_2D, spaceTextureID);
     glDrawArrays(GL_TRIANGLES, floorVertexCount, vertexCount - floorVertexCount);
 

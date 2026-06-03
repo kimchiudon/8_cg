@@ -1,14 +1,14 @@
 ﻿#include "JupiterSystem.h"
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "../Dependencies/include/stb/stb_image.h" // 경로를 프로젝트에 맞게 수정해주세요!
+#include "../Dependencies/include/stb/stb_image.h" 
 #include <filesystem>
 #include <iostream>
 
 namespace fs = std::filesystem;
 
 namespace {
-    // 행렬 헬퍼 함수들
+    
     glm::mat4 T(const glm::vec3& v) { return glm::translate(glm::mat4(1.0f), v); }
     glm::mat4 S(const glm::vec3& v) { return glm::scale(glm::mat4(1.0f), v); }
     glm::mat4 S(float s) { return S(glm::vec3(s)); }
@@ -36,16 +36,13 @@ namespace {
 }
 
 JupiterSystem::JupiterSystem() {
-    // 1. 공용 구체(Sphere) 및 궤도(Orbit) 버퍼 세팅
-    // 모든 행성은 크기만 다를 뿐 똑같은 '구'이므로 하나만 만들어서 돌려 씁니다! (메모리 최적화)
+    
     setupSphere(1.0f, 32, 32);
     setupOrbit(1.0f, 128);
 
-    // 2. 텍스처 경로 설정
     std::string imageFolderPath = fs::current_path().string();
     std::string currentDir = imageFolderPath + "\\textures";
 
-    // 3. 행성 데이터 초기화 및 텍스처 직접 로드
     planets = {
         { "Jupiter", 1.5f, makeAxialTiltX(3.0f), 0.8f, 0.0f, 0.0f, glm::mat4(1.0f), 0.0f, 0.0f, glm::vec4(1.0f, 0.7f, 0.35f, 1.0f),
           loadTexture((currentDir + "\\jupiter.jpg").c_str()), loadTexture((currentDir + "\\jupiter.jpg").c_str()) },
@@ -109,13 +106,13 @@ void JupiterSystem::setupSphere(float radius, int thetaCount, int phiCount) {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sphereEBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLuint), indices.data(), GL_STATIC_DRAW);
 
-    // 위치 속성
+   
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(JupiterVertex), (void*)0);
     glEnableVertexAttribArray(0);
-    // 노말 속성
+   
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(JupiterVertex), (void*)offsetof(JupiterVertex, normal));
     glEnableVertexAttribArray(1);
-    // 텍스처 UV 속성
+
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(JupiterVertex), (void*)offsetof(JupiterVertex, texUV));
     glEnableVertexAttribArray(2);
 
@@ -136,7 +133,7 @@ void JupiterSystem::setupOrbit(float radius, int segmentCount) {
         vertices.push_back(vertex);
         indices.push_back(i);
     }
-    // 궤도는 선으로 그릴 것이므로 선 루프(LINE_LOOP) 형태로 연결합니다.
+    
     orbitIndexCount = indices.size();
 
     glGenVertexArrays(1, &orbitVAO);
@@ -198,18 +195,17 @@ void JupiterSystem::Draw(Shader& shader, Camera& camera, float time, glm::vec3 c
         Planet planet = planets[i];
         glm::mat4 systemOffset = glm::translate(glm::mat4(1.0f), centerPos);
 
-        // 1. 궤도(Orbit) 그리기
+       
         glm::mat4 OrbitModel = systemOffset * makeOrbitModel(planet);
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(OrbitModel));
 
         glBindVertexArray(orbitVAO);
         glDrawElements(GL_LINE_LOOP, orbitIndexCount, GL_UNSIGNED_INT, 0);
 
-        // 2. 행성(Planet) 구체 그리기
         glm::mat4 PlanetModel = systemOffset * makePlanetModel(planet, time);
         glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(PlanetModel));
 
-        // 해당 행성의 텍스처 바인딩
+
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, planet.diffuseTexID);
 
