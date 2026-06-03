@@ -73,12 +73,3 @@
 
 ## 5. 폴더 구조
 
-```txt
-8_cg/
-├─ src/              # main.cpp 및 주요 소스 코드
-├─ headers/          # 클래스 헤더 파일
-├─ shaders/          # vertex shader, fragment shader
-├─ textures/         # 행성 및 안내판 텍스처 이미지
-├─ resources/        # 기타 리소스 파일
-├─ docs/             # 보고서, 회의록, 발표 자료
-└─ record/           # 시연 영상 관련 자료
