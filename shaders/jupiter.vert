@@ -15,6 +15,6 @@ void main() {
     vec4 worldPos = model * vec4(aPos, 1.0);
     gl_Position = projection * view * worldPos;
     TexCoord = aTexUV;
-    Normal   = normalize(mat3(model) * aNormal);  // 구체는 균등 스케일이라 이걸로 충분
+    Normal   = normalize(mat3(model) * aNormal); 
     FragPos  = vec3(worldPos);
 }
