@@ -73,3 +73,10 @@
 
 ## 5. 폴더 구조
 
+8_cg/
+├─ src/              C++ 소스코드 및 클래스 파일
+├─ shaders/          OpenGL vertex/fragment shader 파일
+├─ textures/         행성, 위성, 안내판, 전시관 텍스처 이미지
+├─ Dependencies/     외부 라이브러리 및 헤더 파일
+├─ 8_cg.sln          Visual Studio 솔루션 파일
+└─ README.md         실행 방법 및 프로젝트 설명
